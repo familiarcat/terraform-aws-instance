@@ -1,0 +1,17 @@
+{
+  "models": {
+    "Resume": {
+      "fields": {
+        "id": { "type": "ID", "isRequired": true },
+        "title": { "type": "String" },
+        "summaryId": { "type": "String" }
+      }
+    },
+    "Summary": {
+      "fields": {
+        "id": { "type": "ID", "isRequired": true },
+        "goals": { "type": "String" }
+      }
+    }
+  }
+}
