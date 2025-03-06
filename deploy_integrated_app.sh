@@ -57,7 +57,7 @@ fi
 echo "AWS credentials loaded and valid."
 
 # Derive CERT_DOMAIN and HOSTED_ZONE_ID if not provided.
-# For EC2 deployments, we will use ec2.pbradygeorgen.com.
+# For EC2 deployments, we use ec2.pbradygeorgen.com.
 if [ -z "${CERT_DOMAIN+x}" ]; then
   base_zone=$(aws route53 list-hosted-zones --query "HostedZones[?ends_with(Name, 'pbradygeorgen.com.')].Name" --output text | head -n1)
   if [ -z "$base_zone" ]; then
@@ -301,11 +301,11 @@ build_and_publish_docker() {
   print_success "Docker image built successfully."
 
   print_step "Publishing Docker image to ECR..."
-  if ! aws ecr describe-repositories --repository-names "my-amplify-app" --region "$AWS_DEFAULT_REGION" >/dev/null 2>&1; then
-    aws ecr create-repository --repository-names "my-amplify-app" --region "$AWS_DEFAULT_REGION" >/dev/null || print_error "Failed to create ECR repository"
+  if ! aws ecr describe-repositories --repository-name "my-amplify-app" --region "$AWS_DEFAULT_REGION" >/dev/null 2>&1; then
+    aws ecr create-repository --repository-name "my-amplify-app" --region "$AWS_DEFAULT_REGION" >/dev/null || print_error "Failed to create ECR repository"
   fi
   local REPO_URI
-  REPO_URI=$(aws ecr describe-repositories --repository-names "my-amplify-app" --region "$AWS_DEFAULT_REGION" --query "repositories[0].repositoryUri" --output text)
+  REPO_URI=$(aws ecr describe-repositories --repository-name "my-amplify-app" --region "$AWS_DEFAULT_REGION" --query "repositories[0].repositoryUri" --output text)
   aws ecr get-login-password --region "$AWS_DEFAULT_REGION" | docker login --username AWS --password-stdin "$REPO_URI" || print_error "Docker login to ECR failed"
   docker tag "$LOCAL_DOCKER_TAG" "$REPO_URI:latest" || print_error "Docker tag failed"
   docker push "$REPO_URI:latest" || print_error "Docker push failed"
